@@ -4,12 +4,9 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        if not hasattr(instance, 'profile'):
-            Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'profile'):
+        Profile.objects.create(user=instance)
+    else:
+        # Save profile in case of updates
         instance.profile.save()

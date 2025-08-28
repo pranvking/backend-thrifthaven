@@ -7,6 +7,6 @@ urlpatterns = [
     path('signin/', signin, name='signin'),  
     path('profile/', profile, name='profile'),
     path('update_profile/', update_profile, name='update_profile'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

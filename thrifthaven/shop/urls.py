@@ -1,8 +1,12 @@
-from rest_framework import routers
-from .views import CategoryViewSet, ItemViewSet
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CategoryViewSet, ItemViewSet, NotificationViewSet
 
-router = routers.DefaultRouter()
-router.register(r'categories', CategoryViewSet)
-router.register(r'items', ItemViewSet)
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'items', ItemViewSet, basename='item')
+router.register(r'notifications', NotificationViewSet, basename='notification')
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+]

@@ -30,12 +30,12 @@ class UserSerializer(serializers.ModelSerializer):
         location = validated_data.pop('location', '')
 
         user = User.objects.create_user(
-            username=validated_data['email'],
+            username=validated_data['email'],  # use email as username
             email=validated_data['email'],
             password=validated_data['password']
         )
 
-        Profile.objects.create(user=user, phone=phone, location=location)
+        Profile.objects.create(user=user, phone=phone, location=location or None)
         return user
 
 
@@ -52,16 +52,17 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
 
-        if 'username' in user_data:
-            new_username = user_data['username'].strip()
-            if new_username != instance.user.username:
-                if User.objects.filter(username=new_username).exclude(pk=instance.user.pk).exists():
-                    raise serializers.ValidationError({"username": "This username is already taken."})
-                instance.user.username = new_username
-                instance.user.save()
+        # Update username if provided
+        new_username = user_data.get('username', instance.user.username).strip()
+        if new_username != instance.user.username:
+            if User.objects.filter(username=new_username).exclude(pk=instance.user.pk).exists():
+                raise serializers.ValidationError({"username": "This username is already taken."})
+            instance.user.username = new_username
+            instance.user.save()
 
+        # Update Profile fields
         for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
+            if value is not None:
+                setattr(instance, attr, value)
         instance.save()
         return instance

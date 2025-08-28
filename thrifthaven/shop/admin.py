@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Category, Item
+from .models import Category, Item, Notification
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ("name", "display_categories", "price", "approved", "user", "has_video")
+    list_display = ("name", "display_categories", "price", "approved", "stock", "user", "has_video")
 
     def display_categories(self, obj):
         return ", ".join([c.name for c in obj.categories.all()])
@@ -17,3 +17,7 @@ class ItemAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name",)
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ("user", "item", "message", "is_read", "created_at")

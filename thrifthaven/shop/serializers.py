@@ -1,19 +1,27 @@
 from rest_framework import serializers
-from .models import Category, Item
-
+from .models import Category, Item, Notification
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = ['id', 'name']
+
 
 class ItemSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer(many=True, read_only=True)
-    category_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), many=True, write_only=True, source="categories"
+    categories = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), many=True
     )
+    user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Item
-        fields = ["id", "name", "price", "image", "video", "categories", "category_ids", "user", "approved"]
-        read_only_fields = ["user", "approved"]
+        fields = ['id', 'name', 'description', 'price', 'image', 'video', 'categories', 'user', 'approved', 'stock', 'created_at']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    item = serializers.ReadOnlyField(source='item.name')
+
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'item', 'message', 'is_read', 'created_at']

@@ -11,6 +11,8 @@ class Profile(models.Model):
         default="profile_pictures/default.png"
     )
     location = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user.username or str(self.user.id)
