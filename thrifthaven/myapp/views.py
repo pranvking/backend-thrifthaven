@@ -52,6 +52,7 @@ def profile(request):
         "email": user.email,
         "username": user.username,
         "phone": profile.phone,
+        "location": profile.location,
         "profile_picture": request.build_absolute_uri(profile.profile_picture.url) if profile.profile_picture else None
     })
 
@@ -76,6 +77,10 @@ def update_profile(request):
     if phone:
         profile.phone = phone
 
+    location = request.data.get('location')
+    if location:
+        profile.location = location
+
     if 'profile_picture' in request.FILES:
         profile.profile_picture = request.FILES['profile_picture']
 
@@ -85,5 +90,6 @@ def update_profile(request):
         "message": "Profile updated successfully",
         "username": user.username,
         "phone": profile.phone,
+        "location": profile.location,
         "profile_picture": request.build_absolute_uri(profile.profile_picture.url) if profile.profile_picture else None
     }, status=status.HTTP_200_OK)

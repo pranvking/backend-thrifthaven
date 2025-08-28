@@ -7,10 +7,11 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
     phone = serializers.CharField(write_only=True)
+    location = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'confirm_password', 'phone']
+        fields = ['email', 'password', 'confirm_password', 'phone', 'location']
 
     def validate(self, data):
         if User.objects.filter(username=data['email']).exists():
@@ -26,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('confirm_password')
         phone = validated_data.pop('phone')
+        location = validated_data.pop('location', '')
 
         user = User.objects.create_user(
             username=validated_data['email'],
@@ -33,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
 
-        Profile.objects.create(user=user, phone=phone)
+        Profile.objects.create(user=user, phone=phone, location=location)
         return user
 
 
@@ -41,10 +43,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     username = serializers.CharField(source="user.username", required=False)
     profile_picture = serializers.ImageField(required=False, allow_null=True)
+    location = serializers.CharField(required=False)
 
     class Meta:
         model = Profile
-        fields = ['email', 'username', 'phone', 'profile_picture']
+        fields = ['email', 'username', 'phone', 'profile_picture', 'location']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
