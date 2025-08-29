@@ -4,24 +4,21 @@ from .models import Category, Item, Notification
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name']
+        fields = "__all__"
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    categories = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), many=True
-    )
-    user = serializers.ReadOnlyField(source='user.username')
+    categories = CategorySerializer(many=True, read_only=True)
+    user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Item
-        fields = ['id', 'name', 'description', 'price', 'image', 'video', 'categories', 'user', 'approved', 'stock', 'created_at']
+        fields = "__all__"
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
-    item = serializers.ReadOnlyField(source='item.name')
+    item_name = serializers.CharField(source="item.name", read_only=True)
 
     class Meta:
         model = Notification
-        fields = ['id', 'user', 'item', 'message', 'is_read', 'created_at']
+        fields = ["id", "item", "item_name", "message", "is_read", "created_at"]
