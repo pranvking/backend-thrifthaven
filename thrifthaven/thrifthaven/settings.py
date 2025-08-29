@@ -1,3 +1,4 @@
+import os
 """
 Django settings for thrifthaven project.
 """
@@ -43,8 +44,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True  # for testing only
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
